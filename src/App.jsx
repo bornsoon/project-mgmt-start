@@ -1,19 +1,47 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import AddProject from "./components/AddProject.jsx";
-import ProjectList from "./components/ProjectList.jsx";
+import Project from "./components/Project.jsx";
 
 function App() {
   const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [isAddPage, setIsAddPage] = useState(false);
 
+  const dialog = useRef();
+
+  let id = 0;
+
   function addProject(title, description, date) {
+    id += 1;
     setProjects((prevProjects) => {
       return [
         ...prevProjects,
-        { title: title, description: description, date: date },
+        {
+          id: id,
+          title: title,
+          description: description,
+          date: date,
+          tasks: tasks,
+        },
       ];
     });
+  }
+
+  function addTask(projectId, content) {
+    setProjects((prevProjects) =>
+      prevProjects.map((project) => {
+        if (project.id === projectId) {
+          const taskId = project.tasks.length;
+
+          return {
+            ...project,
+            tasks: [...project.tasks, { id: taskId, content: content }],
+          };
+        }
+        return project;
+      })
+    );
   }
 
   return (
@@ -30,19 +58,13 @@ function App() {
           <ul className="mt-8">
             {projects.map((project) => {
               return (
-                <button
-                  className="w-full text-left px-2 py-1 rounded-sm my-1 hover:text-stone-200 hover:bg-stone-800"
-                  key={project.title}
-                >
-                  {project.title}
-                </button>
+                <Project key={project.id} project={project} addTask={addTask} />
               );
             })}
           </ul>
         </aside>
         <div className="mt-24 text-center w-2/3">
-          <ProjectList projects={projects} />
-          <AddProject addProject={addProject} />
+          <AddProject addProject={addProject} addTask={addTask} />
         </div>
       </main>
     </>
