@@ -1,14 +1,20 @@
 import Task from "./Task.jsx";
 
-export default function SelectedProject({ project, onDelete }) {
-  console.log(project);
+export default function SelectedProject({
+  project,
+  onDelete,
+  onAddTask,
+  onDeleteTask,
+  tasks,
+}) {
+  // console.log(project);
   const formattedDate = new Date(project.dueDate).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 
-  console.log(formattedDate);
+  // console.log(formattedDate);
 
   return (
     <div className="w-[35rem] mt-16">
@@ -29,7 +35,7 @@ export default function SelectedProject({ project, onDelete }) {
           {project.description}
         </p>
       </header>
-      <Task />
+      <Task onAdd={onAddTask} onDelete={onDeleteTask} tasks={tasks} />
     </div>
   );
 }
